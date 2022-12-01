@@ -1,4 +1,4 @@
-function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
+function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,D)
 %http://www.amp.i.kyoto-u.ac.jp/tecrep/index-e.html
     %rho is replaced by reg+rho on 12th Jan 2022.
     % If dp = 1 then NSGD-DP
@@ -51,6 +51,7 @@ function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
     grad_calc_count = 0;
     w = options.w_init;
     grad = problem.grad(w,1:n);
+    g = norm(grad);
     num_of_bachces = floor(n / options.batch_size);     
 
 
@@ -71,13 +72,11 @@ function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
     while (epoch < options.max_epoch)
         perm_idx = [1:n];
             w0 = w;
-                      
-      
         
         for j = 1 : num_of_bachces
 
                if j==1 
-
+                    
                     %rng(j);
                     set = randperm(d,col);
                    
@@ -97,17 +96,16 @@ function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
 
                         lk = length(set); % k: colums
                         % HI = inv(H); % Hessian Inverse
-                        delta = 1e-5;
-                        %regul = norm(grad)+reg;
-                        if g>1
-                            rho = g^2;
-                        else
-                            rho = max(sqrt(g),reg*10);
-                        end
-                        nfg = 1/(C*rho);
+                        delta = D;
+                        
+                        rho = max(C*sqrt(g),reg);
+                        
+                        
+                        nfg = 1/(rho);
                         Ey = eye(lk);
                         ZZ  = Z'*Z;
                         Q = (nfg^2)*(Z/(Ey+nfg*(ZZ)*(ZZ)));
+                        
                 end
             % update step-size
             step = options.stepsizefun(total_iter, options);                
@@ -116,7 +114,8 @@ function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
             start_index = (j-1) * options.batch_size + 1;
             indice_j = perm_idx(start_index:start_index+options.batch_size-1);
             grad = problem.grad(w, indice_j);
-
+            g = norm(grad);
+            
                      %NI =  nfg*eye(d) - (nfg)*Z/(Ey+nfg*(Z'*Z))*Z';
                      p1 = delta*grad;
                      p2 = Z'*grad;
@@ -163,7 +162,7 @@ function [w, infos] = Nystrom_sgdLM(problem, in_options,reg,dp,C,~)
         fprintf('Max epoch reached: max_epochr = %g\n', options.max_epoch);
     end
       
-  infos.delta = del;
+  infos.delta = C;
 
 end
 

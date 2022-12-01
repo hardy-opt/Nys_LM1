@@ -1,4 +1,4 @@
-function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C)
+function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C,D)
 %rho is replaced by reg+rho on 12th Jan 2022.
 
     % If dp = 1 then NSVRG-DP
@@ -51,6 +51,8 @@ function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C)
     epoch = 0;
     grad_calc_count = 0;
     w = options.w_init;
+    g = norm(problem.full_grad(w));
+
 
     num_of_bachces = floor(n / options.batch_size)*2;     
 
@@ -84,7 +86,6 @@ function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C)
             w0 = w;
             full_grad = full_grad_new;
             g = norm(full_grad);
-      
 
 
         for j = 1 : num_of_bachces
@@ -110,19 +111,14 @@ function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C)
                 %lam = 1e-3;%norm(full_grad); % Norm of full_gradient
                 lk = length(set); % k: colums
                % HI = inv(H); % Hessian Inverse
-                        delta = del;
-                        %regul = reg;
-                        if g>1
-                            rho = g^2;
-                        else
-                            rho = max(sqrt(g),reg*10);
-                        end
-                        nfg = 1/(C*rho);
+                        delta = D;
+                       
+                         rho = max(C*sqrt(g),reg);
+       
+                        nfg = 1/(rho);
                         Ey = eye(lk);
                         ZZ  = Z'*Z;
                         Q = (nfg^2)*Z/(Ey+nfg*(ZZ)*(ZZ));
-                
-                
                 end
             % update step-size
             step = options.stepsizefun(total_iter, options);                
@@ -132,7 +128,6 @@ function [w, infos] = Nystrom_svrgLM(problem, in_options,reg,dp,C)
             start_index = (j-1) * options.batch_size + 1;
             indice_j = perm_idx(start_index:start_index+options.batch_size-1);
             grad = problem.grad(w, indice_j);
-            
                      % calculate variance reduced gradient
 
                      grad_w0 = problem.grad(w0,indice_j);

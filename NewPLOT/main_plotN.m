@@ -6,17 +6,17 @@ function [] = main_plotN()
     %Relativer error LINE 219
     RUNS = 1;
     EPOCHS = 20;
-    lambdas = [1e-3,1e-4];%1e0 1e-2 1e-4];
+    lambdas = [1e-4];%1e0 1e-2 1e-4];
 
-    etas = [ 1 0.1 0.01 0.001];%[10 1e0 1e-1 1e-2 1e-3 1e-4 1e-5 ];
-    rhos = [1];%[100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5]; 
-    d = 4; %dataet number from followimg list
+    etas = [ 1 ];%[10 1e0 1e-1 1e-2 1e-3 1e-4 1e-5 ];
+    rhos = [0.001]% 0.01 0.1];%[100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5]; 
+    d = 5; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
-   deltas=[1 0.5 0.1];
-    COLS = [100];%[-1 10 50 100 500];
+   deltas=[1 ]%0.1 0.01];
+    COLS = [20];%[-1 10 50 100 500];
     BSS = [128];
-    path = 'results_Sep22/';
+    path = 'results_Dec22/';
 %     path = 'result_s2qn/';
     
     datasets = {         % COL
@@ -42,21 +42,26 @@ function [] = main_plotN()
 %     b.etas=[1e-3];
 %     params('SVRG')=b;
      sparams = {
-      %  params('NEWTON')
-%         params('Structured_QN')
-%         params('Structured_QN')
-%         params('OBFGS')
+params('NEWTON')
+params('Nystrom_GD')
+params('Nystrom_GD1')
+params('Nystrom_GD2')
+params('Nystrom_GDLM')
+params('Nystrom_GDLM1')
+params('Nystrom_GDLM2')
+params('LBFGS')
 %         params('NSVRG')
-%         params('NSGD-LM')      
-          params('SVRG-LBFGS')
-          params('SVRG-SQN')
-           params('SQN')
-          params('SGD')
-%           params('SVRG')
-          params('adam')
-         params('NSGD')
-        params('NSVRG')
-       % params('NSVRG-LM')
+%        params('SVRG-LBFGS')
+%           params('SVRG-SQN')
+%            params('SQN')
+%           params('SGD')
+%            params('SVRG')
+%           params('adam')
+%       %   params('NSGD')
+%         params('NSVRG')
+%         params('NSVRG-LM')
+%       %  params('NSGD-LM')      
+
         };
     
     yparams = {'cost', 'val_cost', 'acc_tr', 'acc_val'};

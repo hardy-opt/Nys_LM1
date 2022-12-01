@@ -58,7 +58,6 @@ function [w, infos] = Nystrom_sgd(problem, in_options,reg,C)
     grad_calc_count = 0;
     w = options.w_init;
     g = norm(problem.full_grad(w));
-    g1=g+1;
     num_of_bachces = floor(n / options.batch_size);     
 
 
@@ -103,26 +102,15 @@ function [w, infos] = Nystrom_sgd(problem, in_options,reg,C)
                     [Z,fn1,apta] = problem.app_hess(w0,1:n,set,0);
                     end
 
-
                         lk = length(set); % k: colu
-                        %nfg = 1/max(1e-3,max(sqrt(rho*g),rho*sqrt(g)));
                         
-%                         seq = 1/(1.0019^(epoch)*(epoch+1));%1/((reg*1e-1)+1.01^(total_iter));
-%                         
-%                         if g<r1%norm(g)<r1
-%                             nfg = min(((g+r1)*seq)/(2*r1),1e+3);
-%                             regu = 'R1';
-%                         elseif g>r2 %norm(g)>r2
-%                             nfg = ((g+r2)*seq)/(2*g);
-%                             regu = 'R2';
-%                         else
-%                             nfg = seq;%1/max(1e-4,rho*sqrt(g));
-                             regu = 'OtherWise';
-%                         end
-                        nfg = 1/(C*max((g^2),reg));
+                        rho = max(C*sqrt(g),reg);
+                           
+                        nfg = 1/rho;
                         
                         Ey = eye(lk);
                         Q = Z/(Ey+nfg*(Z'*Z));
+
                 end
             % update step-size
             step = options.stepsizefun(total_iter, options);    
@@ -137,6 +125,7 @@ function [w, infos] = Nystrom_sgd(problem, in_options,reg,C)
                     
                      NI = nfg*(grad - nfg*(Q*vect));
                      g = norm(grad);
+ 
                      %steps = max(step,1e-3);
                      v = step*NI;
                      w = w - v;

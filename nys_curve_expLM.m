@@ -6,28 +6,28 @@ function  nys_curve_expLM(darg,col) %4.8446772001339822e-01
     addpath(genpath(pwd));
    % addpath('/data/Datasets/'); % Dataset repository
     NUM_RUN = 1;
-    NUM_EPOCH = 20;
+    NUM_EPOCH = 30;
     P = 10;  %Partition for DP sampling
     K = 0;  % No. of clusters for DP sampling
-    dat = strcat('results_Sep22/',darg);  % result path
-    method = {'NSVRG', 'NSGD','NSVRG-LM','NSGD-LM', 'Structured_QN', 'Structured_QF'};
-    omethod = {'SVRG-LBFGS', 'SVRG-SQN', 'adam', 'SQN', 'OBFGS', 'SVRG', 'SGD', 'NEWTON'};
+    dat = strcat('results_Dec22/',darg);  % result path
+    method = {'NSVRG', 'NSGD','NSVRG-LM','NSGD-LM', 'Nystrom_GD', 'Nystrom_GDLM','Nystrom_GD1', 'Nystrom_GDLM1','Nystrom_GD2', 'Nystrom_GDLM2' };
+    omethod = {'SVRG-LBFGS', 'SVRG-SQN', 'adam', 'SQN', 'OBFGS', 'SVRG', 'SGD', 'NEWTON','LBFGS'};
     %omethod = {'adam','SGD','NEWTON'};
     BATCHES = 128;% [64 128];
     COLS = col;%100];% 50];% 100]; %columns-a8a = [10,100,800], Epsilon = [100,800, 3200];
-    rho = 1;
+    %rho = 1;
     COLS
     for s=1:NUM_RUN
-        for reg= [1e-3 1e-4]
-            for step = [1 0.1 0.01 0.001 ]
+        for reg= [1e-4]
+            for step = [0.001 0.01 0.1 1]
                 data = loaddata(s, reg, step, dat);
-                %for rho = [0.001]% 0.01 0.1]
-                    for m=[1 2 ]
+                for rho = [0.001 0.01 0.1 1]
+                    for m=[5 6 7 8 9 10]
                         for COL =  COLS 
                             if COL > size(data.x_train,1)
                                 break;
                             end
-                            for del= [1 0.5 0.1 0.01]%BATCH_SIZE = BATCHES
+                            for del= [1 0.1 0.01 0.001]%BATCH_SIZE = BATCHES
 %                                 if BATCH_SIZE > size(data.x_train,2)
 %                                     break;
 %                                 end
@@ -70,36 +70,57 @@ function  nys_curve_expLM(darg,col) %4.8446772001339822e-01
                                     %end
                                 elseif m==3
                                     
-                                   [w_s1, info_s1] = Nystrom_svrgLM(problem, options,reg,0,del);  % NSVRG
+                                   [w_s1, info_s1] = Nystrom_svrgLM(problem, options,reg,0,rho,del);  % NSVRG
                                    save(Name,'info_s1');
                                 elseif m==4
                                     
                                     options.step_alg = 'decay-2'; %decay
-                                    [w_s1, info_s1] = Nystrom_sgdLM(problem, options,reg,0,del,rho); % NSGD
+                                    [w_s1, info_s1] = Nystrom_sgdLM(problem, options,reg,0,rho,del); % NSGD
                                     save(Name,'info_s1');
                                 elseif m==5
-                                    if rho==1
-                                    options.step_alg = 'decay-2';
-                                    [w_s1, ~] = structured_QN_NEW(problem, options,1);  %Nystrom
+                                    if del==1
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gd(problem, options,reg,rho);  %Nystrom
                                     save(Name,'info_s1');
                                     end
                                 elseif m==6
-                                    if rho==1
-                                    options.step_alg = 'decay-2';
-                                    [w_s1, info_s1] = structured_QN_NEW(problem, options,0); %Fisher
+                                
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gdLM(problem, options,reg,0,rho,del); %Fisher
+                                    save(Name,'info_s1');
+                                  elseif m==7
+                                    if del==1
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gd1(problem, options,reg,rho);  %Nystrom
                                     save(Name,'info_s1');
                                     end
+                                elseif m==8
+                                
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gdLM1(problem, options,reg,0,rho,del); %Fisher
+                                    save(Name,'info_s1');
+                                  elseif m==9
+                                    if del==1
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gd2(problem, options,reg,rho);  %Nystrom
+                                    save(Name,'info_s1');
+                                    end
+                                elseif m==10
+                                
+                                    %options.step_alg = 'decay-2';
+                                    [w_s1, info_s1] = Nystrom_gdLM2(problem, options,reg,0,rho,del); %Fisher
+                                    save(Name,'info_s1');
                                 end 
                             end
                             
                         end
                     end
-               % end
+                end
                  for BATCH_SIZE = BATCHES
                     if BATCH_SIZE > size(data.x_train,2)
                         break;
                     end
-                    for m= []%[1,2,3,4,6,7]
+                    for m= [ 9 8]%[1,2,3,4,6,7]
                         
                         fprintf('%s - Reg:%f - Step:%f  - Run:%d\n', omethod{m}, reg, step, s);
                         options.max_epoch=NUM_EPOCH;    
@@ -145,6 +166,13 @@ function  nys_curve_expLM(darg,col) %4.8446772001339822e-01
                             options.step_alg = 'backtracking';
                             %options.max_epoch=5;
                             [w_s1, info_s1] = newton(problem, options);
+                        elseif m==9
+                           
+                            options.sub_mode = 'STANDARD';
+                            %options.regularized = true;
+                            options.step_alg = 'backtracking';
+                            %options.max_epoch=5;
+                            [w_s1, info_s1] = lbfgs(problem, options);
                         end                    
                         save(Name,'info_s1');
                     end

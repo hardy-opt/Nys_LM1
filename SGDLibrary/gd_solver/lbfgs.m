@@ -104,21 +104,32 @@ function [w, infos] = lbfgs(problem, options)
 
     % initialise
     iter = 0;
+    epoch = 0;
+    grad_calc_count = 0;
     stopping = false;
-    w_corrupted = false;    
+    w_corrupted = false;  
+    
+    local_options = [ ];
+    options1 = mergeOptions(get_default_options(d), local_options);   
+    options = mergeOptions(options1, options);  
+    
+%     % store first infos
+%     clear infos;
+%     infos.iter = iter;
+%     infos.time = 0;    
+%     infos.grad_calc_count = 0;    
+%     f_val = problem.cost(w);
+%     infos.cost = f_val;     
+%     optgap = f_val - f_opt;
+%     infos.optgap = optgap;
+%     grad = problem.full_grad(w);
+%     gnorm = norm(grad);
+%     infos.gnorm = gnorm;
     
     % store first infos
-    clear infos;
-    infos.iter = iter;
-    infos.time = 0;    
-    infos.grad_calc_count = 0;    
-    f_val = problem.cost(w);
-    infos.cost = f_val;     
-    optgap = f_val - f_opt;
-    infos.optgap = optgap;
-    grad = problem.full_grad(w);
-    gnorm = norm(grad);
-    infos.gnorm = gnorm;
+    clear infos;    
+    [infos, f_val, optgap, grad, gnorm] = store_infos(problem, w, options, [], iter, grad_calc_count, 0);
+    
     if ismethod(problem, 'reg')
         infos.reg = problem.reg(w);   
     end    
@@ -143,9 +154,13 @@ function [w, infos] = lbfgs(problem, options)
     if verbose
         fprintf('L-BFGS: Iter = %03d, cost = %.16e, gnorm = %.4e, optgap = %.4e\n', iter, f_val, gnorm, optgap);
     end     
+    
+    max_iter = options.max_epoch;
 
     % main loop
-    while (optgap > tol_optgap) && (gnorm > tol_gnorm) && (iter < max_iter) && ~stopping     
+    while (iter < max_iter)
+    % main loop
+%while (optgap > tol_optgap) && (gnorm > tol_gnorm) && (iter < max_iter) && ~stopping     
         
         % Revert to steepest descent if is not direction of descent                
         if (p'*grad > 0)
@@ -219,30 +234,38 @@ function [w, infos] = lbfgs(problem, options)
         gnorm = norm(grad);
         
         % measure elapsed time
-        elapsed_time = toc(start_time);       
+        elapsed_time = toc(start_time);  
+        
+        
+        % count gradient evaluations
+        grad_calc_count = grad_calc_count + iter*n;  
         
 
-        % store info
-        if ~(any(isinf(w(:))) || any(isnan(w(:)))) && ~isnan(f_val) && ~isinf(f_val)       
-            infos.iter = [infos.iter iter];
-            infos.time = [infos.time elapsed_time];        
-            infos.grad_calc_count = [infos.grad_calc_count iter*n];      
-            infos.optgap = [infos.optgap optgap];        
-            infos.cost = [infos.cost f_val];
-            infos.gnorm = [infos.gnorm gnorm]; 
-            if ismethod(problem, 'reg')
-                reg = problem.reg(w);
-                infos.reg = [infos.reg reg];
-            end            
-            if store_w
-                infos.w = [infos.w w];         
-            end  
-        else
-            w_corrupted = true;
-            w = w_old;
-            stopping = true;            
-        end
+%         % store info
+%         if ~(any(isinf(w(:))) || any(isnan(w(:)))) && ~isnan(f_val) && ~isinf(f_val)       
+%             infos.iter = [infos.iter iter];
+%             infos.time = [infos.time elapsed_time];        
+%             infos.grad_calc_count = [infos.grad_calc_count iter*n];      
+%             infos.optgap = [infos.optgap optgap];        
+%             infos.cost = [infos.cost f_val];
+%             infos.gnorm = [infos.gnorm gnorm]; 
+%             if ismethod(problem, 'reg')
+%                 reg = problem.reg(w);
+%                 infos.reg = [infos.reg reg];
+%             end            
+%             if store_w
+%                 infos.w = [infos.w w];         
+%             end  
+%         else
+%             w_corrupted = true;
+%             w = w_old;
+%             stopping = true;            
+%         end
        
+        % store infos
+        [infos, f_val, optgap, grad, gnorm] = store_infos(problem, w, options, infos, iter, grad_calc_count, elapsed_time);           
+
+        
         % print info
         if verbose
             fprintf('L-BFGS: Iter = %03d, cost = %.16e, gnorm = %.4e, optgap = %.4e\n', iter, f_val, gnorm, optgap);

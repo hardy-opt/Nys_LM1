@@ -55,6 +55,7 @@ function [w, infos] = newton(problem, in_options)
     iter = 0;  
     grad_calc_count = 0;
     w = options.w_init;
+    epoch = 0;
     
     if (~strcmp(options.sub_mode, 'STANDARD')) && (~strcmp(options.sub_mode, 'CHOLESKY')) && (~strcmp(options.sub_mode, 'INEXACT')) 
         options.sub_mode = 'INEXACT';
@@ -76,10 +77,10 @@ function [w, infos] = newton(problem, in_options)
 
     % set start time
     start_time = tic();  
-   
+    max_iter = options.max_epoch;
 
     % main loop
-   while (iter < options.max_epoch)     
+   while (iter < max_iter)     
 %        while (optgap > options.tol_optgap) && (gnorm > options.tol_gnorm) && (iter < options.max_epoch)     
 
         if strcmp(options.step_alg, 'backtracking')
@@ -138,7 +139,7 @@ function [w, infos] = newton(problem, in_options)
         
         % update iter        
         iter = iter + 1;        
-        
+        epoch = epoch + 1;
         % store infos
         [infos, f_val, optgap, grad, gnorm] = store_infos(problem, w, options, infos, iter, grad_calc_count, elapsed_time);           
        

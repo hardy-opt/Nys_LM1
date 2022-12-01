@@ -5,17 +5,18 @@ function [] = main_plotN()
     % To change dataset : Go to line 65
     %Relativer error LINE 219
     RUNS = 1;
-    EPOCHS = 50;
-    lambdas = [1e-2,1e-3,1e-4];%1e0 1e-2 1e-4];
+    EPOCHS = 30;
+    lambdas = [1e-4];%1e0 1e-2 1e-4];
 
-    etas = [ 1 0.5 0.1 0.01 0.001];%[10 1e0 1e-1 1e-2 1e-3 1e-4 1e-5 ];
-    rhos = [1];%[100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
+    etas = [ 1 0.1 0.01 0.001];%[10 1e0 1e-1 1e-2 1e-3 1e-4 1e-5 ];
+    rhos = [1];%[100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5]; 
+    d = 5; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
-   deltas=[10];
-    COLS = [00];%[-1 10 50 100 500];
+   deltas=[2 5 10];
+    COLS = [20];%[-1 10 50 100 500];
     BSS = [128];
-    path = 'results_Sep22/';
+    path = 'results_Dec22/';
 %     path = 'result_s2qn/';
     
     datasets = {         % COL
@@ -46,17 +47,17 @@ function [] = main_plotN()
 %         params('Structured_QN')
 %         params('OBFGS')
 %         params('NSVRG')
-%         params('NSGD-LM')
-
-%         params('SVRG-LBFGS')
-%         params('SVRG-SQN')
-%         params('SQN')
-%         params('SGD')
-%         params('SVRG')
-%         params('adam')
-        params('NSGD')
+       params('SVRG-LBFGS')
+          params('SVRG-SQN')
+           params('SQN')
+          params('SGD')
+           params('SVRG')
+          params('adam')
+         params('NSGD')
         params('NSVRG')
-       % params('NSVRG-LM')
+        params('NSVRG-LM')
+        params('NSGD-LM')      
+
         };
     
     yparams = {'cost', 'val_cost', 'acc_tr', 'acc_val'};
@@ -69,7 +70,7 @@ function [] = main_plotN()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %To change the data enter the number from the data list of that dataset
     
-    for dsi=4 %6
+    for dsi=d %6
             disp(datasets{dsi})
     for l = 1 :length(lambdas)
 %          sparams{9}.etas=etas(l);

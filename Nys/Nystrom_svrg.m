@@ -55,7 +55,6 @@ function [w, infos] = Nystrom_svrg(problem, in_options,reg,C)
     grad_calc_count = 0;
     w = options.w_init;
     g = norm(problem.full_grad(w));
-    g1 = g+1;
 
 
 
@@ -85,13 +84,12 @@ function [w, infos] = Nystrom_svrg(problem, in_options,reg,C)
             full_grad_new = problem.full_grad(w);
             % count gradient evaluations
             grad_calc_count = grad_calc_count + n; 
-            g=norm(full_grad_new);
 
 
             % store w for SVRG
             w0 = w;
             full_grad = full_grad_new;
-
+            g = norm(full_grad);
       
 
 
@@ -116,38 +114,13 @@ function [w, infos] = Nystrom_svrg(problem, in_options,reg,C)
                     [Z,fn1,apta] = problem.app_hess(w0,1:n,set,0);
                     end
                 %lam = 1e-3;%norm(full_grad); % Norm of full_gradient
-
-
-                        lk = length(set); % k: colu
-                        %nfg = 1/max(1e-3,max(sqrt(rho*g),rho*sqrt(g)));
-                        
-%                         seq = 1/(1.0019^(epoch)*(epoch+1));%1/((reg*1e-1)+1.01^(total_iter));
-%                         
-%                         if g<r1%norm(g)<r1
-%                             nfg = min(((g+r1)*seq)/(2*r1),1e+3);
-%                             regu = 'R1';
-%                         elseif g>r2 %norm(g)>r2
-%                             nfg = ((g+r2)*seq)/(2*g);
-%                             regu = 'R2';
-%                         else
-%                             nfg = seq;%1/max(1e-4,rho*sqrt(g));
-                             %regu = 'OtherWise';
-%                         end
-%                         if g<g1
-                            nfg = 1/(C*max((g^2),reg*10));
-                            regu = 1;
-%                         else
-%                             nfg = 1/(0.5*sqrt(g1));
-%                             regu = 2;
-%                         end
-%                         
-                        %nfg = 1/min(sqrt(g1),sqrt(g));
-
-                % nfg = 1/max(reg,rho*sqrt(g));
+                                      
+                 rho = max(C*sqrt(g),reg);
+                   
+                nfg = 1/rho;
+                lk = length(set); % k: colu
                 Ey = eye(lk);
                 Q = Z/(Ey+nfg*(Z'*Z));
-                
-                
                 
                 end
             % update step-size
@@ -159,7 +132,6 @@ function [w, infos] = Nystrom_svrg(problem, in_options,reg,C)
             start_index = (j-1) * options.batch_size + 1;
             indice_j = perm_idx(start_index:start_index+options.batch_size-1);
             grad = problem.grad(w, indice_j);
-            %g = norm(grad);
            % [Zt,fn1t,aptat] = problem.app_hess(w0,indice_j,set1,0);
 
                      % calculate variance reduced gradient
