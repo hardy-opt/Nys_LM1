@@ -327,8 +327,18 @@ classdef logistic_regressionLM
             
          end
         
-        
-        
+         function [F,g] = Fisher(obj,w,S)
+             [di,m] = size(S);
+             g = zeros(di,1);
+             G = zeros(m,obj.n_train);
+             for i = 1:obj.n_train
+                 gr = grad(obj,w,i);
+                 g = g + gr;
+                 G(:,i) = S'*gr;
+             end
+             F = (1/obj.n_train)*G*G';
+             g = (1/obj.n_train)*g;
+         end
          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
          %%%%%   Structered Quasi-Newton
                   
