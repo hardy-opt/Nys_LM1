@@ -3,8 +3,8 @@ function [bestmu, bestsg, besteta, bestrho, bestdelta] = find_bestN(dataset, met
     bestsg = containers.Map();
     besteta = -1;
     bestrho = -1;
-    
-    if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost')
+    bestdelta = -1;
+    if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost') || strcmp(sort_param, 'gnorm')
         best = inf;
     else
         best = -inf;
@@ -18,7 +18,7 @@ function [bestmu, bestsg, besteta, bestrho, bestdelta] = find_bestN(dataset, met
 %                 if strcmp(sort_param, 'acc_val') || strcmp(sort_param, 'val_cost')
 %                 at = at(2:end);
 %                 end
-                if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost')
+                if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost') || strcmp(sort_param,'gnorm')
 %                     auc=trapz(at,av);
                     auc=min(mu(sort_param));
                     if auc < best
@@ -49,11 +49,11 @@ function [bestmu, bestsg, besteta, bestrho, bestdelta] = find_bestN(dataset, met
                         if mu.Count > 0
                             av=mu(sort_param);
                             at=mu('time');
-                            if strcmp(sort_param, 'acc_val') || strcmp(sort_param, 'val_cost')
+                            if strcmp(sort_param, 'acc_val') || strcmp(sort_param, 'val_cost') || strcmp(sort_param, 'gnorm')
                                 at = at(2:end);
                             end
                             auc=trapz(at,av); 
-                            if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost')
+                            if strcmp(sort_param, 'cost') || strcmp(sort_param, 'val_cost') || strcmp(sort_param, 'gnorm')
                                 if auc < best   %%min(mu(sort_param))
                                     best = auc;
                                     bestmu = mu;

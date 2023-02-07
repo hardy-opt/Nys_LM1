@@ -88,7 +88,7 @@ function [w, infos] = Nystrom_gd2(problem, in_options,reg,C)
 
                         lk = length(set); % k: colu
                         
-                        rho = max(C*(g^2),reg);
+                        rho = max(C*(g^2),1e-4);
                            
                         nfg = 1/rho;
                         

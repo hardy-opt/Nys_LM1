@@ -38,6 +38,7 @@ function [mu, sg] = mean_runN(dataset, method, lambda, eta, rho, EPOCHS, run, CO
             acc(i,:) = d.info_s1.acc_tr(1:endi);
             vacc(i,:) = d.info_s1.acc_val(2:endi);
             time(i,:) = d.info_s1.time(1:endi);
+            gnorm(i,:) = d.info_s1.gnorm(1:endi);
         else
 %             disp(Name);
             continue;
@@ -56,5 +57,7 @@ function [mu, sg] = mean_runN(dataset, method, lambda, eta, rho, EPOCHS, run, CO
         sg('acc_val') = std(vacc, [], 1);
         mu('time') = mean(time, 1);
         mu('epoch') = [0:EPOCHS];
+        mu('gnorm') = mean(gnorm, 1);
+        sg('gnorm') = std(gnorm, [], 1);
     end
 end

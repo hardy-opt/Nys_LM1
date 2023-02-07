@@ -84,11 +84,11 @@ function [w, infos] = rngd(problem, in_options,s)
    while (iter < max_iter) 
 %        while (optgap > options.tol_optgap) && (gnorm > options.tol_gnorm) && (iter < options.max_epoch)     
         %rng(iter+1)
-        %sv = sort(randperm(dim,s));
-        %S = eye(dim);
-        %S = (dim/s)*S(:,sv);
-        S = randn(dim,s);
-        S = orth(S);
+        sv = sort(randperm(dim,s));
+        S = eye(dim);
+        S = sqrt(dim/s)*S(:,sv);
+        %S = randn(dim,s);
+        %S = orth(S);
         
 
         if strcmp(options.step_alg, 'backtracking')
