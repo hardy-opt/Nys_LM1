@@ -4,21 +4,21 @@ function [] = main_plotN()
     % To change X and Y axis properties GOTO LINE 44
     % To change dataset : Go to line 65
     %Relativer error LINE 219
-    RUNS = 1;
+    RUNS = 3;
     EPOCHS = 50;
-    lambdas = [1e-4];%1e0 1e-2 1e-4];
+    lambdas = [1e-5];%1e0 1e-2 1e-4];
 
     etas = [ 1 1e-1];%
     rhos = [ 1];%
-    d = 4; %dataet number from followimg list
+    d = 6; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
-   deltas=[ ];%0.1 0.01];
-    COLS = [200];%[-1 10 50 100 500];
+   deltas=[1 0.1 0.01 0.001];
+    COLS = [30];%[-1 10 50 100 500];
     BSS = [128];
     
     %addpath('/home/hardik/Desktop/')
-    path = 'results_NG/';%'Nystrom_Result23/';
+    path = 'Nystrom_Result23/';
 %     path = 'result_s2qn/';
     
     datasets = {         % COL
@@ -34,20 +34,20 @@ function [] = main_plotN()
         'IJCNN'     %10
         };
 
-    lw = RUNS;
+    lw = 1.5;%RUNS;
     ms = 6;
     params = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COLS(1), BSS(1),deltas);
     
      sparams = {
-params('NEWTON')
-params('NG')
-params('RNG')
-params('SGD')
-params('RNGS')
+%params('NEWTON')
+%params('NG')
+%params('RNG')
+params('GD')
+%params('RNGS')
 params('LBFGS')
-% params('NGD')
-% params('NGD1')
-% params('NGD2')
+ params('NGD')
+ params('NGD1')
+ params('NGD2')
 % params('Nystrom_GDLM')
 % params('Nystrom_GDLM1')
 % params('Nystrom_GDLM2')
@@ -66,7 +66,7 @@ params('LBFGS')
     xparams = {'time', 'epoch'};
     plot_params.sort = yparams{1};
     plot_params.y = yparams{1};
-    plot_params.x = xparams{1};
+    plot_params.x = xparams{2};
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ params('LBFGS')
          %subplot(1,4,l);
 
         figure;
-        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-5);
+        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-7);
 %         xlim([0,200]);
 %         saveas(gcf,strcat('s4qn_',lower(datasets{dsi}),'_vtc_lam',num2str(l+1),'.eps'),'epsc');
  %       legendmarkeradjust(20,20);
@@ -175,11 +175,11 @@ function plot_method_lambda(dataset, sparams, lambda, plot_params, ref)
             idx=length(y);
             if length(sparams)==1
                 displayname = strcat(displayname, '@\lambda=', sprintf('10^{%0.0f})', log10(lambda)));
-               % errorbar(x(1:idx), y(1:idx), s(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
-                 plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                errorbar(x(1:idx), y(1:idx), s(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                 %plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
             else
-               % errorbar(x(1:idx), y(1:idx), s(1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
-                plot(x(1:1:idx), y(1:1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname, 'MarkerIndices', 1:5:idx);
+                errorbar(x(1:idx), y(1:idx), s(1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+               % plot(x(1:1:idx), y(1:1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname, 'MarkerIndices', 1:5:idx);
             end
         end
     end

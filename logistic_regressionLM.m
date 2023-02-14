@@ -293,7 +293,15 @@ classdef logistic_regressionLM
 %             end
             r = rank(W);
             D = diag(W);
-            I = [1./D(1:r);zeros(l-r,1)];
+            if r==l
+                I = [1./D(1:r)];
+            else
+                fprintf('rank is low r < l\n');
+                sig = min(D);
+                F = sig*ones(l-r,1);
+                I = [1./D(1:r); 1./F]; 
+            end
+            % I = [1./D(1:r);zeros(l-r,1)];
             v = sqrt((I));
             B = U.*v';
             %B = U(:,1:r).*v';

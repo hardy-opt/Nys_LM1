@@ -5,7 +5,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
     addpath('/home/hardik/data/')
     addpath(genpath(pwd));
    % addpath('/data/Datasets/'); % Dataset repository
-    NUM_RUN = 1;
+    NUM_RUN = 3;
     NUM_EPOCH = e;
     P = 10;  %Partition for DP sampling
     K = 0;  % No. of clusters for DP sampling
@@ -18,7 +18,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
     %rho = 1;
     COLS;
     for s=1:NUM_RUN
-        for reg= [1e-3 1e-4 1e-5]
+        for reg= [1e-5]
             for step = [1 ] %0.001
                 data = loaddata(s, reg, step, dat);
                 for rho = [ 1]
@@ -120,7 +120,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                     if BATCH_SIZE > size(data.x_train,2)
                         break;
                     end
-                    for m= [ ]%[1,2,3,4,6,7]
+                    for m= [8 9 ]%[1,2,3,4,6,7]
                         
                         fprintf('%s - Reg:%f - Step:%f  - Run:%d\n', omethod{m}, reg, step, s);
                         options.max_epoch=NUM_EPOCH;    
@@ -168,7 +168,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                             options.step_alg = 'backtracking';
                             %options.max_epoch=5;
                             [w_s1, info_s1] = lbfgs(problem, options);
-                         elseif m==9
+                         elseif m==9 %Gradient Descent
                             options.sub_mode = 'STANDARD';
                             %options.regularized = true;
                             options.step_alg = 'backtracking';
