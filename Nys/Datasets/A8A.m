@@ -49,7 +49,8 @@ function data = A8A(seed,reg,ler)
 
     %Initial point with different random seed
     rng(seed);
-    data.w_init = zeros(d,1);
+    data.w_init = randn(d,1);
+    data.w_init = data.w_init/norm(data.w_init);
 
 
 %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

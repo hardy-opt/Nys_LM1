@@ -4,17 +4,17 @@ function [] = main_plotN()
     % To change X and Y axis properties GOTO LINE 44
     % To change dataset : Go to line 65
     %Relativer error LINE 219
-    RUNS = 3;
+    RUNS = 1;
     EPOCHS = 50;
     lambdas = [1e-5];%1e0 1e-2 1e-4];
 
-    etas = [ 1 1e-1];%
+    etas = [ 1 1e-1 0.01 0.001];%
     rhos = [ 1];%
-    d = 6; %dataet number from followimg list
+    d =8; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
    deltas=[1 0.1 0.01 0.001];
-    COLS = [30];%[-1 10 50 100 500];
+    COLS = [500];%[-1 10 50 100 500];
     BSS = [128];
     
     %addpath('/home/hardik/Desktop/')
@@ -32,6 +32,7 @@ function [] = main_plotN()
         'GISETTE'   %8 ---> 50 
         'MRI'       %9
         'IJCNN'     %10
+        'A8AN'      %11
         };
 
     lw = 1.5;%RUNS;
@@ -39,7 +40,7 @@ function [] = main_plotN()
     params = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COLS(1), BSS(1),deltas);
     
      sparams = {
-%params('NEWTON')
+params('NEWTON')
 %params('NG')
 %params('RNG')
 params('GD')
@@ -53,12 +54,12 @@ params('LBFGS')
 % params('Nystrom_GDLM2')
 %params('LBFGS')
 %         params('NSVRG')
-%        params('SVRG-LBFGS')
-%           params('SVRG-SQN')
-%            params('SQN')
+params('SVRG-LBFGS')
+params('SVRG-SQN')
+params('SQN')
 %            params('SVRG')
 %           params('adam')
-%       %   params('NSGD')
+params('NSGD')
 %         params('NSVRG')      
         };
     
@@ -175,11 +176,11 @@ function plot_method_lambda(dataset, sparams, lambda, plot_params, ref)
             idx=length(y);
             if length(sparams)==1
                 displayname = strcat(displayname, '@\lambda=', sprintf('10^{%0.0f})', log10(lambda)));
-                errorbar(x(1:idx), y(1:idx), s(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
-                 %plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                %errorbar(x(1:idx), y(1:idx), s(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                 plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
             else
-                errorbar(x(1:idx), y(1:idx), s(1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
-               % plot(x(1:1:idx), y(1:1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname, 'MarkerIndices', 1:5:idx);
+               % errorbar(x(1:idx), y(1:idx), s(1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                plot(x(1:1:idx), y(1:1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname, 'MarkerIndices', 1:5:idx);
             end
         end
     end

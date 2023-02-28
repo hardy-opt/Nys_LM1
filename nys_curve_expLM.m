@@ -10,7 +10,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
     P = 10;  %Partition for DP sampling
     K = 0;  % No. of clusters for DP sampling
     dat = strcat('Nystrom_Result23/',darg);  % result path
-    method = {'NSVRG', 'NGD','NGD1','NGD2', 'Nystrom_GD', 'Nystrom_GDLM','Nystrom_GD1', 'Nystrom_GDLM1','Nystrom_GD2', 'Nystrom_GDLM2' };
+    method = {'NSGD', 'NGD','NGD1','NGD2', 'Nystrom_GD', 'Nystrom_GDLM','Nystrom_GD1', 'Nystrom_GDLM1','Nystrom_GD2', 'Nystrom_GDLM2' };
     omethod = {'SVRG-LBFGS', 'SVRG-SQN', 'adam', 'SQN', 'OBFGS', 'SVRG', 'SGD', 'LBFGS','GD','NG','RNGS','NEWTON'};
     %omethod = {'adam','SGD','NEWTON'};
     BATCHES = 128;% [64 128];
@@ -18,11 +18,11 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
     %rho = 1;
     COLS;
     for s=1:NUM_RUN
-        for reg= [1e-5]
-            for step = [1 ] %0.001
+        for reg= [1e-5 ]
+            for step = [1 0.1 0.01 0.001]
                 data = loaddata(s, reg, step, dat);
                 for rho = [ 1]
-                    for m= [2,3,4]%[5 6 7 8 9 10]
+                    for m= [1,2,3,4]%[5 6 7 8 9 10]
                         for COL =  COLS 
                             if COL > size(data.x_train,1)
                                 break;
@@ -54,7 +54,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                                 if m==1
                                    % if del == 1
                                     
-                                   [w_s1, info_s1] = Nystrom_svrg(problem, options,reg,del);  % NSVRG-
+                                   [w_s1, info_s1] = Nystrom_sgd(problem, options,reg,del);  % NSVRG-
                                    save(Name,'info_s1');
                                    % Nystrom_svrg(problem, in_options,reg,dp)
                                    % If dp = 1 then NSVRG-DP
@@ -62,21 +62,23 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                                    
                                    % end
                                 elseif m==2
-                                    %if del == 1
+                                    if step == 1
                                     
-                                    options.step_alg = 'decay-2'; %decay
+                                    %options.step_alg = 'decay-2'; %decay
                                     [w_s1, info_s1] = Nystrom_gd(problem, options,reg,del); % NSGD-
                                     save(Name,'info_s1');
-                                    %end
+                                    end
                                 elseif m==3
-                                    
+                                    if step ==1
                                    [w_s1, info_s1] = Nystrom_gd1(problem, options,reg,del);  % NSVRG
                                    save(Name,'info_s1');
+                                    end
                                 elseif m==4
-                                    
-                                    options.step_alg = 'decay-2'; %decay
+                                    if step ==1
+                                    %options.step_alg = 'decay-2'; %decay
                                     [w_s1, info_s1] = Nystrom_gd2(problem, options,reg,del); % NSGD
                                     save(Name,'info_s1');
+                                    end
                                 elseif m==5
                                     if del==1
                                     %options.step_alg = 'decay-2';
@@ -120,7 +122,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                     if BATCH_SIZE > size(data.x_train,2)
                         break;
                     end
-                    for m= [8 9 ]%[1,2,3,4,6,7]
+                    for m= []%[1 2 4 8 12] %[1 2 4 ]%[1,2,3,4,6,7]
                         
                         fprintf('%s - Reg:%f - Step:%f  - Run:%d\n', omethod{m}, reg, step, s);
                         options.max_epoch=NUM_EPOCH;    
@@ -162,19 +164,25 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                             [w_s1, info_s1] = sgd(problem, options);
                        
                         elseif m==8
-                           
+                            
+                            if step==1
                             options.sub_mode = 'STANDARD';
                             %options.regularized = true;
                             options.step_alg = 'backtracking';
                             %options.max_epoch=5;
                             [w_s1, info_s1] = lbfgs(problem, options);
+                            end
                          elseif m==9 %Gradient Descent
-                            options.sub_mode = 'STANDARD';
+                            
+                            if step==1
+                             options.sub_mode = 'STANDARD';
                             %options.regularized = true;
                             options.step_alg = 'backtracking';
                             %options.max_epoch=5;
                             [w_s1, info_s1] = grd(problem, options);
                          
+                            end
+                            
                           elseif m==10
                             options.sub_mode = 'STANDARD';
                             %options.regularized = true;
@@ -189,14 +197,15 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                             [w_s1, info_s1] = rngd(problem, options,col);
                         
                          elseif m==12
-                            options.max_epoch=15;    
-
-                            %options.sub_mode = 'STANDARD';
-                            options.sub_mode = 'CHOLESKY';
+                            %options.max_epoch=15;    
+                            if step ==1
+                            options.sub_mode = 'STANDARD';
+                            %options.sub_mode = 'CHOLESKY';
                             %options.regularized = true;
                             options.step_alg = 'backtracking';
                             %options.max_epoch=5;
                             [w_s1, info_s1] = newton(problem, options);
+                            end
                         end                    
                         save(Name,'info_s1');
                     end

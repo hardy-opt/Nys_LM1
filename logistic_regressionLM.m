@@ -263,7 +263,7 @@ classdef logistic_regressionLM
             
             h2 = obj.x_train(set,indices)';
 
-            a =  h1 * h2;
+            a =  ( 1/(length(indices)))*h1 * h2;
             
             
             
@@ -292,11 +292,13 @@ classdef logistic_regressionLM
 %                 hold on;
 %             end
             r = rank(W);
+            
             D = diag(W);
             if r==l
                 I = [1./D(1:r)];
             else
-                fprintf('rank is low r < l\n');
+                r1 = rank(C);
+                fprintf('r(c)=%d, rank is low r=%d < l\n',r1,r);
                 sig = min(D);
                 F = sig*ones(l-r,1);
                 I = [1./D(1:r); 1./F]; 
@@ -305,7 +307,7 @@ classdef logistic_regressionLM
             v = sqrt((I));
             B = U.*v';
             %B = U(:,1:r).*v';
-            Z = ( 1/sqrt(length(indices)))*C*B;
+            Z = C*B;
            % G = Z*Z';
             
             apptime = toc;

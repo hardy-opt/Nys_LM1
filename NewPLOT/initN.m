@@ -220,9 +220,9 @@ function [methods] = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COL, BS,de
     methods(params.name)=params;
 
     params.name = 'NEWTON';
-    params.line = '-.';
+    params.line = '-';
     params.linewidth = lw;
-    params.linecolor = [0. 0. 0.];
+    params.linecolor = [0. .6 0.];
     params.marker = 'o';
     params.markersize = ms;
     params.facecolor = 'none'; %'none'; %[1 0 0];
@@ -236,7 +236,7 @@ function [methods] = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COL, BS,de
     params.deltas = deltas;
     methods(params.name)=params;
     
-    params.name = 'NSGD2';
+    params.name = 'NSGD';
     params.line = '-.';
     params.linewidth = lw;
     params.linecolor = [0. 0.6 0.7];
