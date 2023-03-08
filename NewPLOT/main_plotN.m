@@ -10,7 +10,7 @@ function [] = main_plotN()
 
     etas = [ 1 1e-1 0.01 0.001];%
     rhos = [ 1];%
-    d =8; %dataet number from followimg list
+    d =11; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
    deltas=[1 0.1 0.01 0.001];
@@ -40,7 +40,7 @@ function [] = main_plotN()
     params = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COLS(1), BSS(1),deltas);
     
      sparams = {
-params('NEWTON')
+%  params('NEWTON')
 %params('NG')
 %params('RNG')
 params('GD')
@@ -67,7 +67,7 @@ params('NSGD')
     xparams = {'time', 'epoch'};
     plot_params.sort = yparams{1};
     plot_params.y = yparams{1};
-    plot_params.x = xparams{2};
+    plot_params.x = xparams{1};
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

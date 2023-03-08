@@ -18,11 +18,11 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
     %rho = 1;
     COLS;
     for s=1:NUM_RUN
-        for reg= [1e-3 ]
+        for reg= [1e-5 ]
             for step = [1 0.1 0.01 0.001]
                 data = loaddata(s, reg, step, dat);
                 for rho = [ 1]
-                    for m= [2,3,4]%[5 6 7 8 9 10]
+                    for m= [1 2,3,4]%[5 6 7 8 9 10]
                         for COL =  COLS 
                             if COL > size(data.x_train,1)
                                 break;
@@ -119,7 +119,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                     if BATCH_SIZE > size(data.x_train,2)
                         break;
                     end
-                    for m= [8 9 12]%[1 2 4 8 12] %[1 2 4 ]%[1,2,3,4,6,7]
+                    for m= 7 %[8 9 12]%[1 2 4 8 12] %[1 2 4 ]%[1,2,3,4,6,7]
                         
                         fprintf('%s - Reg:%f - Step:%f  - Run:%d\n', omethod{m}, reg, step, s);
                         options.max_epoch=NUM_EPOCH;    
