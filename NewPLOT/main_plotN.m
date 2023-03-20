@@ -10,11 +10,11 @@ function [] = main_plotN()
 
     etas = [ 1 1e-1 0.01 0.001];%
     rhos = [ 1];%
-    d =6; %dataet number from followimg list
+    d =11; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
    deltas=[1 0.1 0.01 0.001];
-    COLS = [30];%[-1 10 50 100 500];
+    COLS = [500];%[-1 10 50 100 500];
     BSS = [128];
     
     %addpath('/home/hardik/Desktop/')
@@ -67,7 +67,7 @@ params('NSGD')
     xparams = {'time', 'epoch'};
     plot_params.sort = yparams{1};
     plot_params.y = yparams{1};
-    plot_params.x = xparams{1};
+    plot_params.x = xparams{2};
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

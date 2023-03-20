@@ -27,7 +27,7 @@ function  nys_curve_expLM(darg,col,e) %4.8446772001339822e-01
                             if COL > size(data.x_train,1)
                                 break;
                             end
-                            for del= 0.1%[1 0.1 0.01 0.001]%BATCH_SIZE = BATCHES
+                            for del= 1e-3%[1 0.1 0.01 0.001]%BATCH_SIZE = BATCHES
 %                                 if BATCH_SIZE > size(data.x_train,2)
 %                                     break;
 %                                 end
