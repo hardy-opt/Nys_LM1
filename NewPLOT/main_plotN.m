@@ -4,16 +4,16 @@ function [] = main_plotN()
     % To change X and Y axis properties GOTO LINE 44
     % To change dataset : Go to line 65
     %Relativer error LINE 219
-    RUNS = 1;
-    EPOCHS = 50;
+    RUNS = 3;
+    EPOCHS = 10;
     lambdas = [1e-5];%1e0 1e-2 1e-4];
 
-    etas = [ 1 1e-1 0.01 0.001];%
+    etas = [ 1 1e-1 0.01 0.001 0.0001];%
     rhos = [ 1];%
     d =8; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
-   deltas=[1 0.1 0.01 0.001];
+   deltas=[1 0.1 0.01 0.001 0.0001];
     COLS = [500];%[-1 10 50 100 500];
     BSS = [128];
     
@@ -35,31 +35,27 @@ function [] = main_plotN()
         'A8AN'      %11
         };
 
-    lw = 1.5;%RUNS;
-    ms = 6;
+    lw = 1.8;%RUNS;
+    ms = 12;
     params = initN(lw, ms, lambdas, etas, rhos, RUNS, EPOCHS, COLS(1), BSS(1),deltas);
     
      sparams = {
-params('NEWTON')
+% params('NEWTON')
 %params('NG')
 %params('RNG')
-params('GD')
+% params('GD')
 %params('RNGS')
-params('LBFGS')
+% params('LBFGS')
  params('NGD')
  params('NGD1')
  params('NGD2')
-% params('Nystrom_GDLM')
-% params('Nystrom_GDLM1')
-% params('Nystrom_GDLM2')
-%params('LBFGS')
-%         params('NSVRG')
-params('SVRG-LBFGS')
-params('SVRG-SQN')
-params('SQN')
-%            params('SVRG')
-%           params('adam')
-params('NSGD')
+%params('NSVRG')
+% params('SVRG-LBFGS')
+% params('SVRG-SQN')
+% params('SQN')
+% params('SVRG')
+% params('adam')
+% params('NSGD')
 %         params('NSVRG')      
         };
     
@@ -82,7 +78,7 @@ params('NSGD')
          %subplot(1,4,l);
 
         figure;
-        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-7);
+        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-5);
 %         xlim([0,200]);
 %         saveas(gcf,strcat('s4qn_',lower(datasets{dsi}),'_vtc_lam',num2str(l+1),'.eps'),'epsc');
  %       legendmarkeradjust(20,20);
@@ -95,25 +91,27 @@ end
 
 function plot_method_lambda(dataset, sparams, lambda, plot_params, ref)
     hold on;
-    set(gca, 'FontSize', 18);
-    title(strcat('\lambda=',sprintf('10^{%0.0f}', log10(lambda))));
+    fs=28;
+    fss=32;
+    set(gca, 'FontSize', fs);
+    title(strcat('\lambda=',sprintf('10^{%0.0f}', log10(lambda))),'FontSize',fss);
     switch plot_params.x
         case 'time'
-            xlabel('Time (seconds)');
+            xlabel('CPU time (seconds)','FontSize',fss);
         case 'epoch'
-            xlabel('Epochs');
+            xlabel('Iterations','FontSize',fss);
     end
     switch plot_params.y
         case 'cost'
-            ylabel('Opt. Error (log scale)');
+            ylabel('$f(w)\ $ (log scale)','Interpreter','latex','FontSize',fss);
         case 'val_cost'
-            ylabel('Test Error (log scale)');
+            ylabel('Test Error (log scale)','FontSize',fss);
         case 'acc_tr'
-            ylabel('Train Accuracy');
+            ylabel('Train Accuracy','FontSize',fss);
         case 'acc_val'
-            ylabel('Test Accuracy');
+            ylabel('Test Accuracy','FontSize',fss);
         case 'gnorm'
-            ylabel('$\| \nabla f(w) \|$','Interpreter','latex');
+            ylabel('$\| \nabla f(w) \|$','Interpreter','latex','FontSize',fss);
     end
     if ref>=0
         opt_cost=inf;
@@ -176,10 +174,10 @@ function plot_method_lambda(dataset, sparams, lambda, plot_params, ref)
             idx=length(y);
             if length(sparams)==1
                 displayname = strcat(displayname, '@\lambda=', sprintf('10^{%0.0f})', log10(lambda)));
-                %errorbar(x(1:idx), y(1:idx), s(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
-                 plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+               % errorbar(x(1:5:idx), y(1:5:idx), s(1:5:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+                plot(x(1:idx), y(1:idx), 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
             else
-               % errorbar(x(1:idx), y(1:idx), s(1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
+               %errorbar(x(1:5:idx), y(1:5:idx), s(1:5:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname);
                 plot(x(1:1:idx), y(1:1:idx), 'linestyle', sparams{m}.line, 'color', sparams{m}.linecolor, 'Marker', sparams{m}.marker, 'markersize', sparams{m}.markersize, 'linewidth', sparams{m}.linewidth, 'MarkerFaceColor', sparams{m}.facecolor, 'displayname', displayname, 'MarkerIndices', 1:5:idx);
             end
         end
