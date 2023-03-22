@@ -29,7 +29,7 @@ function data = EPSILON(seed,reg,ler)
 %     data.x_train = data.xtrain;
 %     data.y_train = data.ytrain;
     
-    fprintf('This is A8A train data with n=%d, d=%d\n',size(data.x_train'));
+    fprintf('This is Epsilon train data with n=%d, d=%d\n',size(data.x_train'));
 
     P = M.xtest;
     [nn,~] = size(M.xtest);
@@ -49,7 +49,7 @@ function data = EPSILON(seed,reg,ler)
 %     data.x_test = data.xtest;
 %     data.y_test = data.ytest;
 
-    fprintf('This is A8A test data with n=%d, d=%d\n',size(data.x_test'));
+    fprintf('This is Epsilon test data with n=%d, d=%d\n',size(data.x_test'));
 
     %Initial point with different random seed
     rng(seed);

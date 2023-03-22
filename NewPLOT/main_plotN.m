@@ -9,12 +9,12 @@ function [] = main_plotN()
     lambdas = [1e-5];%1e0 1e-2 1e-4];
 
     etas = [ 1 1e-1 0.01 0.001];%
-    rhos = [ 1];%
-    d =11; %dataet number from followimg list
+    rhos= [ 1];%
+    d =4; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
    deltas=[1 0.1 0.01 0.001];
-    COLS = [500];%[-1 10 50 100 500];
+    COLS = [200];%[-1 10 50 100 500];
     BSS = [128];
     
     %addpath('/home/hardik/Desktop/')
