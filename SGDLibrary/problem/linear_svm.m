@@ -135,12 +135,12 @@ classdef linear_svm
             a = x_part_new * x_part_new(set,:)'/length(indices);
         
             l = length(set);
-            %for i=1:l
-            %a(set(i),i) = a(set(i),i)+obj.lambda; %removed lambda on 10th Jan 2022 (Nystrom on %just f and not on l2)
-            %end
+            for i=1:l
+            a(set(i),i) = a(set(i),i)+obj.lambda; %removed lambda on 10th Jan 2022 (Nystrom on %just f and not on l2)
+            end
             
-            % aN = a;
-            % a = aN;
+             aN = a;
+             a = aN;
               
 
             C = a;
@@ -152,7 +152,17 @@ classdef linear_svm
             
             r = rank(W);
             D = diag(W);
-            I = [1./D(1:r);zeros(l-r,1)];
+            
+            if r==l
+                I = [1./D(1:r)];
+            else
+                r1 = rank(C);
+                fprintf('r(c)=%d, rank is low r=%d < l\n',r1,r);
+                sig = min(D);
+                F = sig*ones(l-r,1);
+                I = [1./D(1:r); 1./F]; 
+            end
+           % I = [1./D(1:r);zeros(l-r,1)];
             v = sqrt((I));
             B = U.*v';
             %B = U(:,1:r).*v';

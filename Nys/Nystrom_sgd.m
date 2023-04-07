@@ -86,7 +86,7 @@ function [w, infos] = Nystrom_sgd(problem, in_options,reg,C)
                if j==1 
 
                     %rng(j);
-                    set = randperm(d,col);
+                    set = sort(randperm(d,col));
                    
                     if any(isnan(f_val)) || any(isinf(f_val)) || any(isnan(w0)) || any(isinf(w0))
                     return;

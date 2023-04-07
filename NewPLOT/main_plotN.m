@@ -5,20 +5,20 @@ function [] = main_plotN()
     % To change dataset : Go to line 65
     %Relativer error LINE 219
     RUNS = 1;
-    EPOCHS = 50;
-    lambdas = [1e-5];%1e0 1e-2 1e-4];
+    EPOCHS = 100;
+    lambdas = [1e-3];%1e0 1e-2 1e-4];
 
     etas = [ 1 1e-1 0.01 0.001];%
     rhos= [ 1];%
-    d =4; %dataet number from followimg list
+    d =6; %dataet number from followimg list
 
    % deltas = [100 1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5];
    deltas=[1 0.1 0.01 0.001];
-    COLS = [200];%[-1 10 50 100 500];
+    COLS = [30];%[-1 10 50 100 500];
     BSS = [128];
     
     %addpath('/home/hardik/Desktop/')
-    path = 'Nystrom_Result23/';
+    path = 'Nystrom_Result23/SVM/';
 %     path = 'result_s2qn/';
     
     datasets = {         % COL
@@ -43,16 +43,16 @@ function [] = main_plotN()
 %  params('NEWTON')
 %params('NG')
 %params('RNG')
-params('GD')
-%params('RNGS')
-params('LBFGS')
+% params('GD')
+% %params('RNGS')
+% params('LBFGS')
  params('NGD')
  params('NGD1')
  params('NGD2')
 % params('Nystrom_GDLM')
 % params('Nystrom_GDLM1')
 % params('Nystrom_GDLM2')
-%params('LBFGS')
+params('SGD')
 %         params('NSVRG')
 params('SVRG-LBFGS')
 params('SVRG-SQN')
@@ -82,7 +82,7 @@ params('NSGD')
          %subplot(1,4,l);
 
         figure;
-        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-7);
+        plot_method_lambda(strcat(path, datasets{dsi}, '/'), sparams, lambdas(l), plot_params, 1*1e-5);
 %         xlim([0,200]);
 %         saveas(gcf,strcat('s4qn_',lower(datasets{dsi}),'_vtc_lam',num2str(l+1),'.eps'),'epsc');
  %       legendmarkeradjust(20,20);
